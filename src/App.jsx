@@ -17,58 +17,45 @@ export const goodsFromServer = [
 
 export const App = () => {
   const [goods, setGoods] = useState(goodsFromServer);
-  const [sortType, setSortType] = useState(null); // 'alphabet' | 'length' | null
+  const [sortType, setSortType] = useState(null); // null | 'alphabet' | 'length'
   const [isReversed, setIsReversed] = useState(false);
 
-  // 🔹 Sort alphabetically
   const handleSortAlphabetically = () => {
     const sorted = [...goodsFromServer].sort((a, b) => a.localeCompare(b));
 
-    setGoods(isReversed ? sorted.reverse() : sorted);
+    setGoods(sorted);
     setSortType('alphabet');
-    // Do NOT reset isReversed here — user might want reverse + alpha
+    setIsReversed(false); // КРИТИЧНО: скидаємо реверс
   };
 
-  // 🔹 Sort by length
   const handleSortByLength = () => {
     const sorted = [...goodsFromServer].sort((a, b) => a.length - b.length);
 
-    setGoods(isReversed ? sorted.reverse() : sorted);
+    setGoods(sorted);
     setSortType('length');
+    setIsReversed(false); // КРИТИЧНО: скидаємо реверс
   };
 
-  // 🔹 Reverse current list
   const handleReverse = () => {
-    setGoods(prevGoods => [...prevGoods].reverse());
+    setGoods(prev => [...prev].reverse());
     setIsReversed(prev => !prev);
   };
 
-  // 🔹 Reset to original
   const handleReset = () => {
     setGoods(goodsFromServer);
     setSortType(null);
     setIsReversed(false);
   };
 
-  // Check if current list differs from original
-  const isChanged = goods.join(',') !== goodsFromServer.join(',');
-
-  // Determine active button styles
-  const getAlphabetButtonClass = () =>
-    `button is-info ${sortType === 'alphabet' ? '' : 'is-light'}`;
-
-  const getLengthButtonClass = () =>
-    `button is-success ${sortType === 'length' ? '' : 'is-light'}`;
-
-  const getReverseButtonClass = () =>
-    `button is-warning ${isReversed ? '' : 'is-light'}`;
+  // Використовуємо join('') — як у твоєму оригінальному коді (це важливо!)
+  const isChanged = goods.join('') !== goodsFromServer.join('');
 
   return (
     <div className="section content">
       <div className="buttons">
         <button
           type="button"
-          className={getAlphabetButtonClass()}
+          className={`button is-info ${sortType === 'alphabet' ? '' : 'is-light'}`}
           onClick={handleSortAlphabetically}
         >
           Sort alphabetically
@@ -76,7 +63,7 @@ export const App = () => {
 
         <button
           type="button"
-          className={getLengthButtonClass()}
+          className={`button is-success ${sortType === 'length' ? '' : 'is-light'}`}
           onClick={handleSortByLength}
         >
           Sort by length
@@ -84,7 +71,7 @@ export const App = () => {
 
         <button
           type="button"
-          className={getReverseButtonClass()}
+          className={`button is-warning ${isReversed ? '' : 'is-light'}`}
           onClick={handleReverse}
         >
           Reverse
